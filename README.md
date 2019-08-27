@@ -1,7 +1,7 @@
 
 # dlk-auditing-test-harness
 
-Front end half of the platform status application, designed to fun in the public zone and test various infrastructure elements.
+Front end half of the platform status application, designed to run in the public zone and test various infrastructure elements.
 
 ### License
 
