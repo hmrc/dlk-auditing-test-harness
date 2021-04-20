@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc._
 import uk.gov.hmrc.platformstatusfrontend.config.AppConfig
-import uk.gov.hmrc.platformstatusfrontend.services.StatusChecker
 import uk.gov.hmrc.platformstatusfrontend.views
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
@@ -32,7 +31,7 @@ case class NoiseRequest(level: String = "INFO", message: String = "###platform-s
 
 
 @Singleton
-class NoiseController @Inject()(appConfig: AppConfig, mcc: MessagesControllerComponents, val statusChecker: StatusChecker)
+class NoiseController @Inject()(appConfig: AppConfig, mcc: MessagesControllerComponents)
   extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
