@@ -7,14 +7,13 @@ object AppDependencies {
 
   val compile = Seq(
 
-    "uk.gov.hmrc"             %% "govuk-template"           % "5.36.0-play-26",
-    "uk.gov.hmrc"             %% "play-ui"                  % "7.40.0-play-26",
-    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "0.42.0",
-    "org.mongodb.scala"       %% "mongo-scala-driver"       % "2.6.0"
+    "uk.gov.hmrc"             %% "govuk-template"           % "5.65.0-play-27",
+    "uk.gov.hmrc"             %% "play-ui"                  % "9.1.0-play-27",
+    "uk.gov.hmrc"             %% "bootstrap-frontend-play-27" % "4.2.0"
   )
 
   val test = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "0.42.0"              % Test classifier "tests",
+    "uk.gov.hmrc"             %% "bootstrap-frontend-play-27"        % "4.2.0"              % Test classifier "tests",
     "org.scalatest"           %% "scalatest"                % "3.0.8"               % Test,
     "org.scalacheck"          %% "scalacheck"               % "1.14.3"              % Test,
     "org.jsoup"               %  "jsoup"                    % "1.10.2"              % Test,
