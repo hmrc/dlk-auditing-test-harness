@@ -22,8 +22,8 @@ import uk.gov.hmrc.play.audit.http.connector.{AuditChannel, AuditConnector, Audi
 
 @Singleton
 class DefaultAuditConnector @Inject()(
-  auditingConfig: AuditingConfig,
-  auditChannel  : AuditChannel,
-  auditCounter  : AuditCounter,
-  auditCountScheduler: AuditCountScheduler
-) extends AuditConnector(auditingConfig, auditChannel, auditCounter, auditCountScheduler)
+  val auditingConfig: AuditingConfig,
+  val auditChannel  : AuditChannel,
+  val auditCounter  : AuditCounter,
+  val auditCountScheduler: AuditCountScheduler
+) extends AuditConnector

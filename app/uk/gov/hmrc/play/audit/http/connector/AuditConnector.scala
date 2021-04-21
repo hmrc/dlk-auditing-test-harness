@@ -44,10 +44,11 @@ object AuditResult {
     }
 }
 
-class AuditConnector(val auditingConfig: AuditingConfig,
-                     val auditChannel: AuditChannel,
-                     val auditCounter: AuditCounter,
-                     val auditCountScheduler: AuditCountScheduler) {
+trait AuditConnector {
+ val auditingConfig: AuditingConfig
+ val auditChannel: AuditChannel
+ val auditCounter: AuditCounter
+ val auditCountScheduler: AuditCountScheduler
 
   auditCountScheduler.watch(auditCounter)
 
