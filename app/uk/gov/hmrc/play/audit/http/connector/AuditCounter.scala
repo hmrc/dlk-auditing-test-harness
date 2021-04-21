@@ -52,7 +52,7 @@ trait AuditCounter {
     if (auditingConfig.enabled) {
       val currentSequence = sequence.get()
       val auditCount = Json.obj(
-        "type" -> "audit-count",
+        "type" -> "audit-counter",
         "auditSource" -> auditingConfig.auditSource,
         "instanceID" -> instanceID,
         "timestamp" -> timestamp(),
