@@ -38,6 +38,7 @@ trait AuditCounter {
   protected def currentTime() = Instant.now
 
 
+
   private[connector] val sequence = new AtomicLong(0)
   private[connector] val publishedSequence = new AtomicLong(0)
   private[connector] val finalSequence = new AtomicBoolean(false)
