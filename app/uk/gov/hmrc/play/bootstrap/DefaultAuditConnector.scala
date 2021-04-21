@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditChannel, AuditConnector, AuditCountScheduler, AuditCounter}
 
+
 @Singleton
 class DefaultAuditConnector @Inject()(
   val auditingConfig: AuditingConfig,
