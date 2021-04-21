@@ -1,8 +1,3 @@
 # microservice specific routes
 
-GET       /noise                        uk.gov.hmrc.platformstatusfrontend.controllers.NoiseController.noise
-POST      /noise                        uk.gov.hmrc.platformstatusfrontend.controllers.NoiseController.createNoise
-
-GET       /kill                         uk.gov.hmrc.platformstatusfrontend.controllers.KillController.kill
-POST      /kill                         uk.gov.hmrc.platformstatusfrontend.controllers.KillController.meteOutDeath
-POST      /leak                         uk.gov.hmrc.platformstatusfrontend.controllers.KillController.leakMemory
+GET       /                        uk.gov.hmrc.platformstatusfrontend.controllers.HelloController.hello
