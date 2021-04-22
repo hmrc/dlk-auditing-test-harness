@@ -17,14 +17,15 @@
 package uk.gov.hmrc.play.audit.http.connector
 
 import akka.Done
-import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
-
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, ZoneId}
 import java.util.UUID
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong}
+
+import play.api.Logger
+
 import scala.concurrent.{ExecutionContext, Future}
 
 trait AuditCounter {
@@ -32,7 +33,7 @@ trait AuditCounter {
   def auditChannel: AuditChannel
   def auditMetrics: AuditCounterMetrics
 
-  protected val logger: Logger = LoggerFactory.getLogger(getClass)
+  protected val logger: Logger = Logger("auditCounter")
 
   protected val instanceID = UUID.randomUUID().toString
   protected def currentTime() = Instant.now
