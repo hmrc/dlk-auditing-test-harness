@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.play.bootstrap
+package uk.gov.hmrc.play.bootstrap.audit
+
 
 import akka.stream.Materializer
 import javax.inject.{Inject, Singleton}

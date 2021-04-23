@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.play.bootstrap
+package uk.gov.hmrc.play.bootstrap.audit
 
-import javax.inject.{Inject, Singleton}
+import play.api.inject.ApplicationLifecycle
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
-import uk.gov.hmrc.play.audit.http.connector.{AuditChannel, AuditConnector, AuditCountScheduler, AuditCounter}
+import uk.gov.hmrc.play.audit.http.connector.{AuditChannel, AuditConnector, AuditCounter}
 
+import javax.inject.Inject
 
-@Singleton
 class DefaultAuditConnector @Inject()(
-  val auditingConfig: AuditingConfig,
-  val auditChannel  : AuditChannel,
-  val auditCounter  : AuditCounter,
-  val auditCountScheduler: AuditCountScheduler
-) extends AuditConnector
+                                       val auditingConfig: AuditingConfig,
+                                       val auditChannel: AuditChannel,
+                                       val auditCounter: AuditCounter,
+                                       val lifecycle     : ApplicationLifecycle) extends AuditConnector {
+
+}

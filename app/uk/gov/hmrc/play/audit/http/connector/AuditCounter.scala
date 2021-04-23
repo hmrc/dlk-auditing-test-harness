@@ -17,6 +17,7 @@
 package uk.gov.hmrc.play.audit.http.connector
 
 import akka.Done
+import akka.actor.{ActorSystem, CoordinatedShutdown}
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import java.time.format.DateTimeFormatter
@@ -24,30 +25,30 @@ import java.time.{Instant, ZoneId}
 import java.util.UUID
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong}
 
-import play.api.Logger
+import org.slf4j.{LoggerFactory, Logger}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration._
 
 trait AuditCounter {
+  def createMetadata():JsObject
+}
+
+private[connector] trait UnpublishedAuditCounter extends AuditCounter {
   def auditingConfig: AuditingConfig
   def auditChannel: AuditChannel
   def auditMetrics: AuditCounterMetrics
 
-  protected val logger: Logger = Logger("auditCounter")
-
-  protected val instanceID = UUID.randomUUID().toString
-  protected def currentTime() = Instant.now
-
-
-
-  private[connector] val sequence = new AtomicLong(0)
-  private[connector] val publishedSequence = new AtomicLong(0)
-  private[connector] val finalSequence = new AtomicBoolean(false)
-
+  protected val logger: Logger = LoggerFactory.getLogger("auditCounter")
+  private val instanceID = UUID.randomUUID().toString
+  private val sequence = new AtomicLong(0)
+  private val publishedSequence = new AtomicLong(0)
+  private val finalSequence = new AtomicBoolean(false)
+  
   if (auditingConfig.enabled) {
-    auditMetrics.registerMetric("audit-count.sequence", () => sequence.get())
-    auditMetrics.registerMetric("audit-count.published", () => publishedSequence.get())
-    auditMetrics.registerMetric("audit-count.final", () => if (finalSequence.get()) 1 else 0)
+    auditMetrics.registerMetric("audit-counter.sequence", () => sequence.get())
+    auditMetrics.registerMetric("audit-counter.published", () => publishedSequence.get())
+    auditMetrics.registerMetric("audit-counter.isFinal", () => if (finalSequence.get()) 1 else 0)
   }
 
   def publish(isFinal:Boolean)(implicit ec: ExecutionContext): Future[Done] = {
@@ -85,10 +86,31 @@ trait AuditCounter {
     )
   }
 
+  protected def currentTime() = Instant.now
   private def timestamp(): String = {
     DateTimeFormatter
       .ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
       .withZone(ZoneId.of("UTC"))
       .format(currentTime())
+  }
+}
+
+
+
+abstract class PublishedAuditCounter(
+    actorSystem: ActorSystem,
+    coordinatedShutdown: CoordinatedShutdown
+  )(implicit val ec: ExecutionContext) extends UnpublishedAuditCounter {
+
+  private val scheduler = actorSystem.scheduler.schedule(60.seconds, 60.seconds, new Runnable {
+    override def run(): Unit = publish(isFinal = false)
+  })
+
+  //This is intentionally run at ServiceRequestsDone which is before the default ApplicationLifecycle stopHook
+  // as this must be run before the AuditChannel WSClient is closed
+  // and before final metrics report, triggered by the close in the EnabledGraphiteReporting stopHook
+  coordinatedShutdown.addTask(CoordinatedShutdown.PhaseServiceRequestsDone, "final audit counters") { () =>
+    scheduler.cancel()
+    publish(isFinal = true)
   }
 }

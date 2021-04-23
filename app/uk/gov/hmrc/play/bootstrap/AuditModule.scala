@@ -18,13 +18,14 @@ package uk.gov.hmrc.play.bootstrap
 
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.audit.http.connector.{AuditChannel, AuditConnector, AuditCountScheduler, AuditCounter}
+import uk.gov.hmrc.play.audit.http.connector.{AuditChannel, AuditConnector, AuditCounter, AuditCounterMetrics}
+import uk.gov.hmrc.play.bootstrap.audit.{DefaultAuditChannel, DefaultAuditConnector, DefaultAuditCounter, DefaultAuditCounterMetrics}
 
-class TestAuditModule extends Module {
+class AuditModule extends Module {
 
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = Seq(
-    bind[AuditCountScheduler].to[DefaultAuditCountScheduler],
     bind[AuditChannel].to[DefaultAuditChannel],
+    bind[AuditCounterMetrics].to[DefaultAuditCounterMetrics],
     bind[AuditCounter].to[DefaultAuditCounter],
     bind[AuditConnector].to[DefaultAuditConnector]
   )

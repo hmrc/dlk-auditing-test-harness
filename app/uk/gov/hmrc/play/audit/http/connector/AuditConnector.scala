@@ -18,7 +18,6 @@ package uk.gov.hmrc.play.audit.http.connector
 
 import java.util.UUID
 
-import akka.stream.Materializer
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.json.{JsObject, Json, Writes}
 import uk.gov.hmrc.audit.HandlerResult
@@ -45,16 +44,14 @@ object AuditResult {
 }
 
 trait AuditConnector {
- val auditingConfig: AuditingConfig
- val auditChannel: AuditChannel
- val auditCounter: AuditCounter
- val auditCountScheduler: AuditCountScheduler
-
-  auditCountScheduler.watch(auditCounter)
+  def auditingConfig: AuditingConfig
+  def auditChannel  : AuditChannel
+  def auditCounter  : AuditCounter
 
   private val logger: Logger = LoggerFactory.getLogger(getClass)
 
   lazy val auditSentHeaders: Boolean = auditingConfig.auditSentHeaders
+
   lazy val auditSerialiser: AuditSerialiserLike = AuditSerialiser
 
   def sendExplicitAudit(auditType: String, detail: Map[String, String])(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
