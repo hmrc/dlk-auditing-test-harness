@@ -20,9 +20,9 @@ import java.io.IOException
 import java.net.URL
 import java.util.concurrent.TimeoutException
 
+import uk.gov.hmrc.audit.WSClient
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.libs.json.JsValue
-import play.api.libs.ws.StandaloneWSClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,7 +36,7 @@ object HttpResult {
 
 abstract class HttpHandler(
   endpointUrl: URL,
-  wsClient   : StandaloneWSClient
+  wsClient   : WSClient
 ) {
   private val logger: Logger = LoggerFactory.getLogger(getClass)
 
