@@ -34,6 +34,7 @@ trait AuditCounter {
   def createMetadata():JsObject
 }
 
+
 private[connector] trait UnpublishedAuditCounter extends AuditCounter {
   def auditingConfig: AuditingConfig
   def auditChannel: AuditChannel
