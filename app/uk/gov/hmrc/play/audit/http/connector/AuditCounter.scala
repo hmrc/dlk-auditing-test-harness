@@ -35,6 +35,7 @@ trait AuditCounter {
 }
 
 
+
 private[connector] trait UnpublishedAuditCounter extends AuditCounter {
   def auditingConfig: AuditingConfig
   def auditChannel: AuditChannel
