@@ -26,8 +26,10 @@ class DefaultAuditCounterMetrics @Inject()(metrics: Metrics) extends AuditCounte
 
   def registerMetric(name: String, read: () => Option[Long]): Unit = {
     metrics.defaultRegistry.gauge(name, new MetricSupplier[Gauge[_]] {
-      override def newMetric(): Gauge[_] = new Gauge[Long] {
-        override def getValue: Long = read().map(java.lang.Long.valueOf).orNull
+      override def newMetric(): Gauge[_] = new Gauge[java.lang.Long] {
+        override def getValue: java.lang.Long = {
+          read().map(java.lang.Long.valueOf).orNull
+        }
       }
     })
   }
