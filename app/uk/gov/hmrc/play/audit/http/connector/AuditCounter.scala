@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, ZoneId}
 import java.util.UUID
-import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong}
+import java.util.concurrent.atomic.{AtomicLong, AtomicReference}
 
 import org.slf4j.{LoggerFactory, Logger}
 
@@ -43,12 +43,12 @@ private[connector] trait UnpublishedAuditCounter extends AuditCounter {
   private val instanceID = UUID.randomUUID().toString
   private val sequence = new AtomicLong(0)
   private val publishedSequence = new AtomicLong(0)
-  private val finalSequence = new AtomicBoolean(false)
-  
+  private val finalSequence = new AtomicReference[Option[Long]](None)
+
   if (auditingConfig.enabled) {
-    auditMetrics.registerMetric("audit-counter.sequence", () => sequence.get())
-    auditMetrics.registerMetric("audit-counter.published", () => publishedSequence.get())
-    auditMetrics.registerMetric("audit-counter.isFinal", () => if (finalSequence.get()) 1 else 0)
+    auditMetrics.registerMetric("audit-counter.sequence", () => Some(sequence.get()))
+    auditMetrics.registerMetric("audit-counter.published", () => Some(publishedSequence.get()))
+    auditMetrics.registerMetric("audit-counter.final", () => finalSequence.get)
   }
 
   def publish(isFinal:Boolean)(implicit ec: ExecutionContext): Future[Done] = {
@@ -64,9 +64,9 @@ private[connector] trait UnpublishedAuditCounter extends AuditCounter {
       )
       publishedSequence.set(currentSequence)
       if (isFinal) {
-        finalSequence.set(true)
+        finalSequence.set(Some(currentSequence))
       }
-      logger.info(s"AuditCount: $auditCount")
+      logger.info(s"AuditCounter: $auditCount")
       auditChannel.send("/write/audit", auditCount)(ec).map(_ => Done)(ec)
     } else {
       Future.successful(Done)
@@ -74,7 +74,7 @@ private[connector] trait UnpublishedAuditCounter extends AuditCounter {
   }
 
   def createMetadata():JsObject = {
-    if (finalSequence.get) {
+    if (finalSequence.get.isDefined) {
       logger.warn(s"Audit created after publication of final audit-count. This can lead to undetected audit loss.")
     }
     Json.obj(
@@ -98,9 +98,9 @@ private[connector] trait UnpublishedAuditCounter extends AuditCounter {
 
 
 abstract class PublishedAuditCounter(
-    actorSystem: ActorSystem,
-    coordinatedShutdown: CoordinatedShutdown
-  )(implicit val ec: ExecutionContext) extends UnpublishedAuditCounter {
+                                      actorSystem: ActorSystem,
+                                      coordinatedShutdown: CoordinatedShutdown
+                                    )(implicit val ec: ExecutionContext) extends UnpublishedAuditCounter {
 
   private val scheduler = actorSystem.scheduler.schedule(60.seconds, 60.seconds, new Runnable {
     override def run(): Unit = publish(isFinal = false)
