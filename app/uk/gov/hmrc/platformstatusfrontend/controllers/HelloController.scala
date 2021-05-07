@@ -16,14 +16,19 @@
 
 package uk.gov.hmrc.platformstatusfrontend.controllers
 
-import javax.inject.{Singleton, Inject}
+import javax.inject.{Inject, Singleton}
+import org.slf4j.LoggerFactory
+import play.api.Logger
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 @Singleton
 class HelloController @Inject ()(mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
+  private val logger = LoggerFactory.getLogger(getClass)
+
   def hello = Action { implicit request =>
+    logger.info("hello")
     Ok("Hello World")
   }
 

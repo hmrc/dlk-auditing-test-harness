@@ -41,7 +41,11 @@ private[connector] trait UnpublishedAuditCounter extends AuditCounter {
   def auditChannel: AuditChannel
   def auditMetrics: AuditCounterMetrics
 
-  protected val logger: Logger = LoggerFactory.getLogger("auditCounter")
+  protected val logger: Logger = {
+    val l = LoggerFactory.getLogger("auditCounter")
+    l.asInstanceOf[ch.qos.logback.classic.Logger].setLevel(ch.qos.logback.classic.Level.INFO)
+    l
+  }
   private val instanceID = UUID.randomUUID().toString
   private val sequence = new AtomicLong(0)
   private val publishedSequence = new AtomicLong(0)
