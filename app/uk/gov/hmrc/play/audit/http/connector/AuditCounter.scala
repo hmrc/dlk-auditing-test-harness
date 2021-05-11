@@ -27,8 +27,10 @@ import java.time.{Instant, ZoneId}
 import java.util.UUID
 import java.util.concurrent.atomic.{AtomicLong, AtomicReference}
 
-import org.apache.commons.lang3.time.FastDateFormat
-import org.slf4j.{Logger, LoggerFactory}
+import ch.qos.logback.classic.{Level, Logger=>LogbackLogger, LoggerContext}
+import ch.qos.logback.classic.spi.LoggingEvent
+import org.slf4j.{Logger=>Slf4JLogger, LoggerFactory}
+import uk.gov.hmrc.play.logging.JsonEncoder
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
@@ -44,7 +46,7 @@ private[connector] trait UnpublishedAuditCounter extends AuditCounter {
   def auditChannel: AuditChannel
   def auditMetrics: AuditCounterMetrics
 
-  protected val logger: Logger = LoggerFactory.getLogger("auditCounter")
+  protected val logger: Slf4JLogger = LoggerFactory.getLogger("auditCounter")
 
   private val instanceID = UUID.randomUUID().toString
   private val sequence = new AtomicLong(0)
@@ -79,14 +81,15 @@ private[connector] trait UnpublishedAuditCounter extends AuditCounter {
     }
   }
 
-  private val dateFormat = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss.SSSZZ")
+  private val encoder = new JsonEncoder
+
+  private val infoLogger = new LoggerContext().getLogger("play-auditing")
 
   private def logToStdOut(message:String): Unit = {
-    //Not using normal log method because we don't want the log turned off
-    System.out.println(Json.obj("app" -> auditingConfig.auditSource,
-    "hostname" -> InetAddress.getLocalHost.getHostName,
-    "timestamp" -> dateFormat.format(System.currentTimeMillis()),
-    "message" -> message))
+    val event = new LoggingEvent(
+      getClass.getName(), infoLogger, Level.INFO, message, null, null
+    )
+    System.out.write(encoder.encode(event))
   }
 
   def createMetadata():JsObject = {
