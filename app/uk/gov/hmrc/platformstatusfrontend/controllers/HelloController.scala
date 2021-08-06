@@ -16,19 +16,25 @@
 
 package uk.gov.hmrc.platformstatusfrontend.controllers
 
-import javax.inject.{Inject, Singleton}
 import org.slf4j.LoggerFactory
-import play.api.Logger
 import play.api.mvc.MessagesControllerComponents
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext.Implicits.global
+
 @Singleton
-class HelloController @Inject ()(mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+class HelloController @Inject ()(mcc: MessagesControllerComponents, auditConnector: AuditConnector) extends FrontendController(mcc) {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
   def hello = Action { implicit request =>
     logger.info("hello")
+    implicit val hc = HeaderCarrier()
+    auditConnector.sendEvent(DataEvent(auditSource = "dlk-auditing-test-harness", auditType = "ExplicitEvent"))
     Ok("Hello World")
   }
 
