@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.play.bootstrap.audit
+package uk.gov.hmrc.play.bootstrap
 
-import akka.stream.Materializer
+import play.api.inject.{Binding, Module}
+import play.api.{Configuration, Environment}
+import uk.gov.hmrc.http.CoreGet
+import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
-import javax.inject.{Inject, Singleton}
-import play.api.inject.ApplicationLifecycle
-import uk.gov.hmrc.play.audit.http.config.AuditingConfig
-import uk.gov.hmrc.play.audit.http.connector.{AuditChannel, DatastreamMetrics}
+class HttpClientModule extends Module {
 
-@Singleton
-class DefaultAuditChannel @Inject()(
-  val auditingConfig: AuditingConfig,
-  val materializer  : Materializer,
-  val lifecycle     : ApplicationLifecycle,
-  val datastreamMetrics: DatastreamMetrics
-) extends AuditChannel
+  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = Seq(
+    bind[HttpClient].to[DefaultHttpClient],
+    // binding additional interfaces so that libraries that depend on http-verbs can be easily injected
+    bind[CoreGet].to[DefaultHttpClient]
+  )
+}

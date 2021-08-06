@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.play.bootstrap.audit
+package uk.gov.hmrc.play.bootstrap.auth
 
-import akka.stream.Materializer
+import javax.inject.Inject
+import uk.gov.hmrc.auth.core.PlayAuthConnector
+import uk.gov.hmrc.http.CorePost
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.http.HttpClient
 
-import javax.inject.{Inject, Singleton}
-import play.api.inject.ApplicationLifecycle
-import uk.gov.hmrc.play.audit.http.config.AuditingConfig
-import uk.gov.hmrc.play.audit.http.connector.{AuditChannel, DatastreamMetrics}
+class DefaultAuthConnector @Inject()(
+  httpClient: HttpClient,
+  servicesConfig: ServicesConfig
+) extends PlayAuthConnector {
 
-@Singleton
-class DefaultAuditChannel @Inject()(
-  val auditingConfig: AuditingConfig,
-  val materializer  : Materializer,
-  val lifecycle     : ApplicationLifecycle,
-  val datastreamMetrics: DatastreamMetrics
-) extends AuditChannel
+  override val serviceUrl: String = servicesConfig.baseUrl("auth")
+
+  override val http: CorePost = httpClient
+}

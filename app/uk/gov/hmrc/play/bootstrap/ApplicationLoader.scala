@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.play.audit.http.connector
+package uk.gov.hmrc.play.bootstrap
 
-//
-// Exposes the underlying metrics to the AuditCounter code
-// This indirection is needed because the play metrics library is specific to the play version
+import play.api.ApplicationLoader.Context
+import play.api.inject.guice.{GuiceApplicationBuilder, GuiceApplicationLoader}
+import uk.gov.hmrc.play.bootstrap.config.Base64ConfigDecoder
 
-trait AuditCounterMetrics {
-  def registerMetric(name:String, read:()=>Option[Long]):Unit
+class ApplicationLoader extends GuiceApplicationLoader with Base64ConfigDecoder {
+
+  override def builder(context: Context): GuiceApplicationBuilder =
+    super.builder(context.copy(initialConfiguration = decodeConfig(context.initialConfiguration)))
 }

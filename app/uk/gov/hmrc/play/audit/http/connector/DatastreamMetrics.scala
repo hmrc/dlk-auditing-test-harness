@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.play.bootstrap.audit
+package uk.gov.hmrc.play.audit.http.connector
 
-import akka.stream.Materializer
+trait Counter {
+  def inc(): Unit
+}
 
-import javax.inject.{Inject, Singleton}
-import play.api.inject.ApplicationLifecycle
-import uk.gov.hmrc.play.audit.http.config.AuditingConfig
-import uk.gov.hmrc.play.audit.http.connector.{AuditChannel, DatastreamMetrics}
-
-@Singleton
-class DefaultAuditChannel @Inject()(
-  val auditingConfig: AuditingConfig,
-  val materializer  : Materializer,
-  val lifecycle     : ApplicationLifecycle,
-  val datastreamMetrics: DatastreamMetrics
-) extends AuditChannel
+case class DatastreamMetrics(
+  successCounter: Counter,
+  rejectCounter: Counter,
+  failureCounter: Counter,
+  metricsKey: Option[String] // not present if metrics are disabled
+)
