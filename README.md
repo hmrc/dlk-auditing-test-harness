@@ -24,10 +24,12 @@ sbt run
 ```
 docker-compose -f docker-compose.yaml up
 ```
-- start datastream on port 9999 by modifying the run.sh in the datastream project
+- start datastream on port 9999 by modifying run.sh in the datastream project
 ```
 -Dhttp.port=9999
 ```
+- before running dlk-auditing-test-harness with the local snapshot of boostrap-play you'll probably need to increase
+the connection timeout due to the time it takes for changes to be done in mitmproxy
 - run dlk-auditing-test-harness 
 ```
 sbt run
