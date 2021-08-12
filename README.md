@@ -1,7 +1,7 @@
 
 # dlk-auditing-test-harness
 
-Service used to test local snapshots of boostrap-play. 
+Service used to test local snapshots of boostrap-play.
 
 #### Workflow for getting play-auditing changes into dlk-auditing-test-harness:
 - change play-auditing library
@@ -18,8 +18,10 @@ sbt run
 #### Observing all the side effects of datastream responding with 400 to play-auditing
 - download [mitmproxy](https://mitmproxy.org/downloads/) and start it using:
 ```
-./mitmproxy --mode reverse:http://localhost:9999 --listen-port 8100
+./mitmproxy --mode reverse:http://localhost:9999 --listen-port 8100 --set block_list='/audit/400'
 ```
+*the block_list option allows you to define an intercept pattern of url "audit" and immediately return a status code of 400*
+
 - from the datastream project use the docker-compose file for starting up rabbitMQ
 ```
 docker-compose -f docker-compose.yaml up
@@ -28,17 +30,12 @@ docker-compose -f docker-compose.yaml up
 ```
 -Dhttp.port=9999
 ```
-- before running dlk-auditing-test-harness with the local snapshot of boostrap-play you'll probably need to increase
-the connection timeout due to the time it takes for changes to be done in mitmproxy
-- run dlk-auditing-test-harness 
+- run dlk-auditing-test-harness
 ```
 sbt run
 ```
-- while in mitmproxy, use "i" to bring up the intercept prompt and type in "audit". This will intercept all requests from
-dlk-auditing-test-harness to datastream
 - use curl for call dlk-auditing-test-harness
 ```
 curl localhost:9000/dlk-auditing-test-harness
 ```
-- in mitmproxy, hit "a" to allow the request to go through, and then "e" followed by "c" to bring up the prompt for changing
-the status code of the response. Change it to 400 for instance to see a Bad Request being returned to dlk-auditing-test-harness
+- in mitmproxy you should now see a 400 returned to dlk-auditing-test-harness
