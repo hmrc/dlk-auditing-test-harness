@@ -1,7 +1,7 @@
 
 # dlk-auditing-test-harness
 
-Service used to test local snapshots of boostrap-play.
+Service used to test local snapshots of boostrap-play. 
 
 #### Workflow for getting play-auditing changes into dlk-auditing-test-harness:
 - change play-auditing library
@@ -30,7 +30,7 @@ docker-compose -f docker-compose.yaml up
 ```
 -Dhttp.port=9999
 ```
-- run dlk-auditing-test-harness
+- run dlk-auditing-test-harness 
 ```
 sbt run
 ```
