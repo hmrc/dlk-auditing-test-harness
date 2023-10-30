@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,10 @@ class HelloController @Inject ()(mcc: MessagesControllerComponents, auditConnect
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def hello = Action { implicit request =>
+  def hello = Action {
     logger.info("hello")
     implicit val hc = HeaderCarrier()
     auditConnector.sendEvent(DataEvent(auditSource = "dlk-auditing-test-harness", auditType = "ExplicitEvent"))
     Ok("Hello World")
   }
-
 }
