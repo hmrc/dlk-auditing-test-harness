@@ -20,7 +20,3 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-settings" % "4.15.0")
 addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "2.2.0")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-auto-build" % "3.14.0")
-
-addSbtPlugin("uk.gov.hmrc" % "sbt-git-versioning" % "2.4.0")
-
-addSbtPlugin("uk.gov.hmrc" % "sbt-artifactory" % "1.17.0")
