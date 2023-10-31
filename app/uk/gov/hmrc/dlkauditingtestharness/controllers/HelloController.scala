@@ -24,7 +24,6 @@ import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class HelloController @Inject ()(mcc: MessagesControllerComponents, auditConnector: AuditConnector) extends FrontendController(mcc) {
@@ -34,6 +33,7 @@ class HelloController @Inject ()(mcc: MessagesControllerComponents, auditConnect
   def hello = Action {
     logger.info("hello")
     implicit val hc = HeaderCarrier()
+    implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
     auditConnector.sendEvent(DataEvent(auditSource = "dlk-auditing-test-harness", auditType = "ExplicitEvent"))
     Ok("Hello World")
   }
