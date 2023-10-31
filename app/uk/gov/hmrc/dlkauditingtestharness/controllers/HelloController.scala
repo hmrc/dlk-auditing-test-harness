@@ -32,9 +32,8 @@ class HelloController @Inject ()(mcc: MessagesControllerComponents, auditConnect
 
   def hello = Action {
     logger.info("hello")
-    implicit val hc = HeaderCarrier()
-    implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
-    auditConnector.sendEvent(DataEvent(auditSource = "dlk-auditing-test-harness", auditType = "ExplicitEvent"))
+    auditConnector.sendEvent(
+      DataEvent(auditSource = "dlk-auditing-test-harness", auditType = "ExplicitEvent"))(HeaderCarrier(), scala.concurrent.ExecutionContext.global)
     Ok("Hello World")
   }
 }
