@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,19 +23,18 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import scala.concurrent.ExecutionContext
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class HelloController @Inject ()(mcc: MessagesControllerComponents, auditConnector: AuditConnector) extends FrontendController(mcc) {
+class HelloController @Inject()(mcc: MessagesControllerComponents, auditConnector: AuditConnector)(implicit ec: ExecutionContext) extends FrontendController(mcc) {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def hello = Action { implicit request =>
+  def hello = Action {
     logger.info("hello")
     implicit val hc = HeaderCarrier()
     auditConnector.sendEvent(DataEvent(auditSource = "dlk-auditing-test-harness", auditType = "ExplicitEvent"))
     Ok("Hello World")
   }
-
 }
